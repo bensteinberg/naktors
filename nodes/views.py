@@ -95,13 +95,10 @@ def stop_all(request):
     # prob better
     for actor_ref in pykka.ActorRegistry.get_all():
         actor_urn = actor_ref.actor_urn
-        try:
-            this_node = Node.objects.get(actor_urn=actor_urn)
+        for this_node in Node.objects.filter(actor_urn=actor_urn):
             this_node.started = False
             this_node.actor_urn = None
             this_node.save()
-        except:
-            pass
         actor_ref.stop()
         logger.info("%s stopped actor %s" % (this_node.name, actor_urn,))
     return index(request)
