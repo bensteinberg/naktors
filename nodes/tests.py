@@ -33,8 +33,8 @@ class NodeTestCase(TestCase):
 class AppTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+        self.user = User.objects.create_user('testuser', 'testuser@example.com', 'testpassword')
+        self.client.login(username='testuser', password='testpassword')
 
     def test_node_create_start_stop(self):
 
@@ -119,6 +119,10 @@ class AppTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertNotEqual(response.json()['actor_urn'], None)
             self.assertEqual(response.json()['started'], True)
+        # and try to start an already-started node
+        response = self.client.get('/nodes/1/start')
+        self.assertEqual(response.status_code, 200)
+        # then stop all
         response = self.client.get('/nodes/all/stop')
         self.assertEqual(response.status_code, 200)
         for pk in pks:
@@ -126,3 +130,9 @@ class AppTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['actor_urn'], None)
             self.assertEqual(response.json()['started'], False)
+
+        # get some 404s
+        response = self.client.get('/nodes/99/')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/start')
+        self.assertEqual(response.status_code, 404)
