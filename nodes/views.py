@@ -1,5 +1,3 @@
-#from django.shortcuts import render
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse, HttpResponse, Http404
 #from django.core import serializers
 from django.contrib.auth.decorators import login_required
@@ -24,11 +22,11 @@ def index(request):
 
 @login_required
 def node(request, node_id):
-    this_node = get_object_or_404(Node, pk=node_id)
     try:
+        this_node = Node.objects.get(pk=node_id)
         return JsonResponse(_as_object(this_node))
-    except:
-        return this_node
+    except Node.DoesNotExist:
+        raise Http404('No such node')
 
 
 @login_required
