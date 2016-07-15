@@ -125,6 +125,13 @@ class AppTestCase(TestCase):
         # and try to start an already-started node
         response = self.client.get('/nodes/1/start')
         self.assertEqual(response.status_code, 200)
+
+        # pause to make and break a connection
+        response = self.client.get('/nodes/1/connect/2')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/nodes/1/disconnect/2')
+        self.assertEqual(response.status_code, 200)
+
         # then stop all
         response = self.client.get('/nodes/all/stop')
         self.assertEqual(response.status_code, 200)
@@ -145,4 +152,8 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/99/stop')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/yell/hello')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/connect/100')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/disconnect/100')
         self.assertEqual(response.status_code, 404)
