@@ -130,9 +130,14 @@ class AppTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['actor_urn'], None)
             self.assertEqual(response.json()['started'], False)
+        # and try to stop an already-stopped node
+        response = self.client.get('/nodes/1/stop')
+        self.assertEqual(response.status_code, 200)
 
         # get some 404s
         response = self.client.get('/nodes/99/')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/start')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/stop')
         self.assertEqual(response.status_code, 404)
