@@ -149,13 +149,13 @@ def yell(request, node_id, content):
     except:
         raise Http404("No such node")
     try:
-        logging.info("yeller is %s" % (this_node.actor_urn,))
         actor_ref = pykka.ActorRegistry.get_by_urn(this_node.actor_urn)
+        actor_ref.proxy().yell(content)
+        logging.info("%s yells %s" % (this_node.actor_urn, content))
+        return JsonResponse({'actor': this_node.actor_urn, 'yell': content})
     except:
-        return JsonResponse({})
+        raise Http404("Node has no actor")
         
-    actor_ref.proxy().yell(content)
-    return JsonResponse({'actor': this_node.actor_urn, 'yell': content})
 
 
 def _as_object(this_node):

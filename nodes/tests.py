@@ -156,7 +156,11 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/stop')
         self.assertEqual(response.status_code, 200)
 
-        # get some 404s
+        # yell from a stopped node
+        response = self.client.get('/nodes/1/yell/hello')
+        self.assertEqual(response.status_code, 404)
+
+        # get some other 404s
         response = self.client.get('/nodes/99/')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/start')
