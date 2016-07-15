@@ -75,6 +75,26 @@ def stop(request, node_id):
 
 
 @login_required
+def start_all(request):
+    try:
+        for this_node in Node.objects.all():
+            if this_node.started and this_node.actor_urn:
+                pass
+            else:
+                logger.info("%s starting an actor..." % (this_node.name,))
+                actor_ref = Aktor.start()
+                this_node.actor_urn = actor_ref.actor_urn
+                this_node.started = True
+                this_node.save()
+        return JsonResponse({'nodes': [_as_object(this_node)
+                                   for this_node
+                                   in Node.objects.order_by('pk')]})
+    except:
+        e = sys.exc_info()[0]
+        raise Http404('Error: %s' % (e,))
+
+
+@login_required
 def stop_all(request):
     # don't use pykka.ActorRegistry.stop_all(), since we need to
     # update the nodes -- or I guess we could and do a single query,
