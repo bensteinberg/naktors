@@ -1,12 +1,13 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from nodes.models import Node, NodeConnection
+from nodes.models import Node, NodeConnection, NodeClass
 #from nodes.actors import Aktor
 
 
 class NodeTestCase(TestCase):
     def setUp(self):
         Node.objects.create(name="somenode")
+        Node.objects.create(name="anothernode")
 
     def test_node(self):
         mynode = Node.objects.get(name="somenode")
@@ -14,11 +15,20 @@ class NodeTestCase(TestCase):
         self.assertEqual(mynode.started, False)
 
     def test_connection(self):
-        node1 = Node.objects.create(name="node1")
-        node2 = Node.objects.create(name="node2")
-        connection = NodeConnection(from_node=node1, to_node=node2)
-        self.assertEqual(connection.from_node, node1)
-        self.assertEqual(connection.to_node, node2)
+        somenode = Node.objects.get(name="somenode")
+        anothernode = Node.objects.get(name="anothernode")
+        connection = NodeConnection(from_node=somenode, to_node=anothernode)
+        connection.save()
+        self.assertEqual(connection.from_node, somenode)
+        self.assertEqual(connection.to_node, anothernode)
+
+    def test_class(self):
+        somenode = Node.objects.get(name="somenode")
+        someclass = NodeClass(class_name="someclass")
+        someclass.save()
+        somenode.node_classes.add(someclass)
+        self.assertEqual(somenode.node_classes.count(), 1)
+
 
 class AppTestCase(TestCase):
     def setUp(self):
