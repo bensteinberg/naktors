@@ -135,7 +135,12 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/disconnect/2')
         self.assertEqual(response.status_code, 200)
 
+        # yell:
+        response = self.client.get('/nodes/1/yell/hello')
+        self.assertEqual(response.status_code, 200)
+
         # and broadcast -- would be cool to confirm receipt
+        # in both cases
         response = self.client.get('/nodes/broadcast/hello')
         self.assertEqual(response.status_code, 200)
 
