@@ -119,6 +119,9 @@ class AppTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertNotEqual(response.json()['actor_urn'], None)
             self.assertEqual(response.json()['started'], True)
+        # try start_all again, for coverage's sake
+        response = self.client.get('/nodes/all/start')
+        self.assertEqual(response.status_code, 200)
         # and try to start an already-started node
         response = self.client.get('/nodes/1/start')
         self.assertEqual(response.status_code, 200)
