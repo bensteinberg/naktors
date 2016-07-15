@@ -13,6 +13,7 @@ class NodeTestCase(TestCase):
         mynode = Node.objects.get(name="somenode")
         self.assertEqual(mynode.actor_urn, None)
         self.assertEqual(mynode.started, False)
+        self.assertEqual(str(mynode), "somenode")
 
     def test_connection(self):
         somenode = Node.objects.get(name="somenode")
@@ -21,11 +22,13 @@ class NodeTestCase(TestCase):
         connection.save()
         self.assertEqual(connection.from_node, somenode)
         self.assertEqual(connection.to_node, anothernode)
+        self.assertEqual(str(connection), "somenode -> anothernode")
 
     def test_class(self):
         somenode = Node.objects.get(name="somenode")
         someclass = NodeClass(class_name="someclass")
         someclass.save()
+        self.assertEqual(str(someclass), "someclass")
         somenode.node_classes.add(someclass)
         self.assertEqual(somenode.node_classes.count(), 1)
 
