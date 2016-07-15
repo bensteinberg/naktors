@@ -154,7 +154,7 @@ def yell(request, node_id, content):
     try:
         this_node = Node.objects.get(pk=node_id)
     except:
-        return Http404("No such node")
+        raise Http404("No such node")
     try:
         logging.info("yeller is %s" % (this_node.actor_urn,))
         actor_ref = pykka.ActorRegistry.get_by_urn(this_node.actor_urn)
