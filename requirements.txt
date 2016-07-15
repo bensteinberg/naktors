@@ -1,0 +1,4 @@
+coverage==4.1
+Django==1.9.7
+django-bootstrap3==7.0.1
+Pykka==1.2.1

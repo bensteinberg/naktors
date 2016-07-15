@@ -1,0 +1,22 @@
+{% extends 'bootstrap.html' %}
+
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block bootstrap3_content %}
+
+<div class="container">
+  <h1>{% block title %}Naktors{% endblock %}</h1>
+
+      {% if user.is_authenticated %}
+      {% trans "Logged in" %}: {{ user.username }} 
+      (<a href="{% url logout %}">{% trans "Log out" %}</a> | 
+      <a href="{% url password_change %}">{% trans "Change password" %}</a>)
+      {% endif %}
+      <hr />
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+
+        {% block content %}(no content){% endblock %}
+    </div>
+
+{% endblock %}
