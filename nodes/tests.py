@@ -110,3 +110,19 @@ class AppTestCase(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['actor_urn'], None)
             self.assertEqual(response.json()['started'], False)
+
+        # try the 'all' routes
+        response = self.client.get('/nodes/all/start')
+        self.assertEqual(response.status_code, 200)
+        for pk in pks:
+            response = self.client.get('/nodes/%s/' % (pk,))
+            self.assertEqual(response.status_code, 200)
+            self.assertNotEqual(response.json()['actor_urn'], None)
+            self.assertEqual(response.json()['started'], True)
+        response = self.client.get('/nodes/all/stop')
+        self.assertEqual(response.status_code, 200)
+        for pk in pks:
+            response = self.client.get('/nodes/%s/' % (pk,))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['actor_urn'], None)
+            self.assertEqual(response.json()['started'], False)
