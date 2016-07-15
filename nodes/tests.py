@@ -141,3 +141,5 @@ class AppTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/stop')
         self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/yell/hello')
+        self.assertEqual(response.status_code, 404)
