@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from nodes.models import Node
+from nodes.models import Node, NodeConnection
 #from nodes.actors import Aktor
 
 
@@ -13,6 +13,12 @@ class NodeTestCase(TestCase):
         self.assertEqual(mynode.actor_urn, None)
         self.assertEqual(mynode.started, False)
 
+    def test_connection(self):
+        node1 = Node.objects.create(name="node1")
+        node2 = Node.objects.create(name="node2")
+        connection = NodeConnection(from_node=node1, to_node=node2)
+        self.assertEqual(connection.from_node, node1)
+        self.assertEqual(connection.to_node, node2)
 
 class AppTestCase(TestCase):
     def setUp(self):
