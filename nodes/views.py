@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponse, Http404
 #from django.core import serializers
 from django.contrib.auth.decorators import login_required
 
-from .models import Node, NodeClass
+from .models import Node, NodeClass, NodeConnection
 from .actors import Aktor
 
 import pykka
@@ -116,6 +116,31 @@ def stop_all(request):
 @login_required
 def actors(request):
     return JsonResponse({'actors': [actor_ref.actor_urn for actor_ref in pykka.ActorRegistry.get_all()]})
+
+
+@login_required
+def connect(request, from_node_id, to_node_id):
+    try:
+        from_node = Node.objects.get(pk=from_node_id)
+        to_node = Node.objects.get(pk=to_node_id)
+        node_connection = NodeConnection(from_node=from_node, to_node=to_node)
+        node_connection.save()
+        return JsonResponse({ 'connected': { 'from': from_node.name, 'to': to_node.name }})
+    except:
+        e = sys.exc_info()[0]
+        raise Http404('Error: %s' % (e,))
+
+@login_required
+def disconnect(request, from_node_id, to_node_id):
+    try:
+        from_node = Node.objects.get(pk=from_node_id)
+        to_node = Node.objects.get(pk=to_node_id)
+        node_connection = NodeConnection.objects.get(from_node=from_node, to_node=to_node)
+        node_connection.delete()
+        return JsonResponse({ 'disconnected': { 'from': from_node.name, 'to': to_node.name }})
+    except:
+        e = sys.exc_info()[0]
+        raise Http404('Error: %s' % (e,))
 
 
 @login_required

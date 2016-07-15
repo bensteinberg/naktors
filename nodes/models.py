@@ -38,6 +38,7 @@ class Node(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class NodeConnection(models.Model):
     """
     Node connections are intended to be one-way; if you want a two-way
@@ -45,3 +46,6 @@ class NodeConnection(models.Model):
     """
     from_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='from_node')
     to_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='to_node')
+
+    def __str__(self):
+        return "%s -> %s" % (self.from_node.name, self.to_node.name)
