@@ -157,6 +157,35 @@ def yell(request, node_id, content):
         raise Http404("Node has no actor")
         
 
+@login_required
+def whisper(request, from_node_id, to_node_id, content):
+    try:
+        from_node = Node.objects.get(pk=from_node_id)
+        to_node = Node.objects.get(pk=to_node_id)
+    except:
+        raise Http404("No such node")
+    if from_node.actor_urn:
+        message = { 'sender': from_node.actor_urn, 'data': content }
+    else:
+        raise Http404("Sender is not started")
+    try:
+        actor_ref = pykka.ActorRegistry.get_by_urn(to_node.actor_urn)
+        actor_ref.tell(message)
+        logging.info("%s whispered %s to %s" % (from_node.actor_urn[-4:], content, to_node.actor_urn[-4:]))
+        return JsonResponse({'from': from_node.actor_urn, 'to': to_node.actor_urn, 'whisper': content})
+    except:
+        raise Http404("Node has no actor")
+
+
+@login_required
+def tell_class(request, node_id, class_name, content):
+    pass
+
+
+@login_required
+def tell_network(request, node_id, content):
+    pass
+
 
 def _as_object(this_node):
     classes = [ node_class.class_name for node_class in this_node.node_classes.all() ]
