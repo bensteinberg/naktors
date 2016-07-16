@@ -75,7 +75,7 @@ def stop(request, node_id):
 @login_required
 def start_all(request):
     for this_node in Node.objects.all():
-        if this_node.started and this_node.actor_urn:
+        if this_node.started and this_node.actor_urn and pykka.ActorRegistry.get_by_urn(this_node.actor_urn):
             pass
         else:
             logger.info("%s starting an actor..." % (this_node.name,))
@@ -94,13 +94,12 @@ def stop_all(request):
     # update the nodes -- or I guess we could and do a single query,
     # prob better
     for actor_ref in pykka.ActorRegistry.get_all():
-        actor_urn = actor_ref.actor_urn
-        for this_node in Node.objects.filter(actor_urn=actor_urn):
-            this_node.started = False
-            this_node.actor_urn = None
-            this_node.save()
         actor_ref.stop()
-        logger.info("%s stopped actor %s" % (this_node.name, actor_urn,))
+    for this_node in Node.objects.all():
+        this_node.started = False
+        this_node.actor_urn = None
+        this_node.save()
+    # logger.info("%s stopped actor %s" % (this_node.name, actor_urn,))
     return index(request)
 
 
@@ -179,7 +178,23 @@ def whisper(request, from_node_id, to_node_id, content):
 
 @login_required
 def tell_class(request, node_id, class_name, content):
-    pass
+    try:
+        from_node = Node.objects.get(pk=node_id)
+    except:
+        raise Http404("No such node")
+    if from_node.actor_urn and pykka.ActorRegistry.get_by_urn(from_node.actor_urn):
+        message = { 'sender': from_node.actor_urn, 'data': content }
+    else:
+        raise Http404("Sender %s has no actor" % (from_node.name,))
+    try:
+        this_class = NodeClass.objects.get(class_name=class_name)
+    except:
+        raise Http404("No such class")
+    for to_node in Node.objects.all():
+        if this_class in to_node.node_classes.all():
+            actor_ref = pykka.ActorRegistry.get_by_urn(to_node.actor_urn)
+            actor_ref.tell(message)
+    return JsonResponse({'from': from_node.name, 'to': class_name, 'told': content})
 
 
 @login_required

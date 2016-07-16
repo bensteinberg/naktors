@@ -38,6 +38,8 @@ class AppTestCase(TestCase):
         self.client = Client()
         self.user = User.objects.create_user('testuser', 'testuser@example.com', 'testpassword')
         self.client.login(username='testuser', password='testpassword')
+        someclass = NodeClass(class_name="someclass")
+        someclass.save()
 
     def test_node_create_start_stop(self):
 
@@ -132,6 +134,10 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/whisper/2/shhh')
         self.assertEqual(response.status_code, 200)
 
+        # tell class
+        response = self.client.get('/nodes/1/tell/class/someclass/hi')
+        self.assertEqual(response.status_code, 200)
+
         # and broadcast -- would be cool to confirm receipt
         # in both cases
         response = self.client.get('/nodes/broadcast/hello')
@@ -183,4 +189,8 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/99/disconnect/100')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/whisper/100/sh')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/1/tell/class/nosuchclass/hi')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 404)
