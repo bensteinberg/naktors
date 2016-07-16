@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 class Aktor(pykka.ThreadingActor):
 
     def on_receive(self, message):
-        if message['sender'] != self.actor_urn:
+        sender = message.get('sender', None)
+        data = message.get('data', None)
+        if sender != self.actor_urn:
             logger.info("%s heard %s from %s" % (self.actor_urn[-4:], message['data'], message['sender']))
         
     def on_start(self):
