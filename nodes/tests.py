@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from nodes.models import Node, NodeConnection, NodeClass
-#from nodes.actors import Aktor
 
 
 class NodeTestCase(TestCase):
@@ -36,7 +35,9 @@ class NodeTestCase(TestCase):
 class AppTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user('testuser', 'testuser@example.com', 'testpassword')
+        self.user = User.objects.create_user('testuser',
+                                             'testuser@example.com',
+                                             'testpassword')
         self.client.login(username='testuser', password='testpassword')
         someclass = NodeClass(class_name="someclass")
         someclass.save()
@@ -183,21 +184,29 @@ class AppTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # get some other 404s
+
+        # look up a non-existent node
         response = self.client.get('/nodes/99/')
         self.assertEqual(response.status_code, 404)
+        # start and stop a non-existent node
         response = self.client.get('/nodes/99/start')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/stop')
         self.assertEqual(response.status_code, 404)
+        # yell from a non-existent node
         response = self.client.get('/nodes/99/yell/hello')
         self.assertEqual(response.status_code, 404)
+        # connect and disconnect non-existent nodes
         response = self.client.get('/nodes/99/connect/100')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/disconnect/100')
         self.assertEqual(response.status_code, 404)
+        # whisper from and to non-existent nodes
         response = self.client.get('/nodes/99/whisper/100/sh')
         self.assertEqual(response.status_code, 404)
+        # tell_class from a non-existent node
         response = self.client.get('/nodes/99/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 404)
+        # tell_class from a stopped node
         response = self.client.get('/nodes/1/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 404)

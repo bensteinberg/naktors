@@ -44,8 +44,12 @@ class NodeConnection(models.Model):
     Node connections are intended to be one-way; if you want a two-way
     connection, make one in each direction.
     """
-    from_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='from_node')
-    to_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='to_node')
+    from_node = models.ForeignKey(Node,
+                                  on_delete=models.CASCADE,
+                                  related_name='from_node')
+    to_node = models.ForeignKey(Node,
+                                on_delete=models.CASCADE,
+                                related_name='to_node')
 
     def __str__(self):
         return "%s -> %s" % (self.from_node.name, self.to_node.name)

@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^(?P<from_node_id>[0-9]+)/connect/(?P<to_node_id>[0-9]+)$',
         views.connect, name='connect'),
     url(r'^(?P<from_node_id>[0-9]+)/disconnect/(?P<to_node_id>[0-9]+)$',
-        views.disconnect,name='disconnect'),
+        views.disconnect, name='disconnect'),
     url(r'^all/start$',
         views.start_all, name='start_all'),
     url(r'^all/stop$',
@@ -24,7 +24,9 @@ urlpatterns = [
         views.new, name='new'),
     url(r'^(?P<node_id>[0-9]+)/yell/(?P<content>.+)$',
         views.yell, name='yell'),
-    url(r'^(?P<from_node_id>[0-9]+)/whisper/(?P<to_node_id>[0-9]+)/(?P<content>.+)$',
+    url(r'^(?P<from_node_id>[0-9]+)/whisper/'
+        '(?P<to_node_id>[0-9]+)/'
+        '(?P<content>.+)$',
         views.whisper, name='whisper'),
     url(r'^(?P<node_id>[0-9]+)/tell/class/(?P<class_name>.+)/(?P<content>.+)$',
         views.tell_class, name='tell_class'),
