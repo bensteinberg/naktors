@@ -5,6 +5,7 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
+  - pip install flake8
 env:
   - SECRET_KEY='*E?k<C=E^/$d|Q1XI(7%yU7p)Z*Y9D{x1#sHd(&b:5Tpm^c!6xI?@JT4e]o+sIfQw|r$SGSf0xRdX%`izw}&Duac~5{%5XflYj]!'
 script:
