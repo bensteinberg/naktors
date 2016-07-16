@@ -134,9 +134,16 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/whisper/2/shhh')
         self.assertEqual(response.status_code, 200)
 
-        # tell class
+        # tell class -- need to add class via API.... for now:
+        somenode = Node.objects.get(pk=1)
+        someclass = NodeClass.objects.get(class_name="someclass")
+        somenode.node_classes.add(someclass)
+
         response = self.client.get('/nodes/1/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 200)
+        # tell a non-existent class
+        response = self.client.get('/nodes/1/tell/class/nosuchclass/hi')
+        self.assertEqual(response.status_code, 404)
 
         # and broadcast -- would be cool to confirm receipt
         # in both cases
@@ -189,8 +196,6 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/99/disconnect/100')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/whisper/100/sh')
-        self.assertEqual(response.status_code, 404)
-        response = self.client.get('/nodes/1/tell/class/nosuchclass/hi')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 404)
