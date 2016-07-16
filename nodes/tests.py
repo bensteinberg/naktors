@@ -199,3 +199,5 @@ class AppTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/tell/class/someclass/hi')
         self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/1/tell/class/someclass/hi')
+        self.assertEqual(response.status_code, 404)
