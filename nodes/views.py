@@ -167,14 +167,14 @@ def whisper(request, from_node_id, to_node_id, content):
     if from_node.actor_urn:
         message = { 'sender': from_node.actor_urn, 'data': content }
     else:
-        raise Http404("Sender is not started")
+        raise Http404("Sender %s has no actor" % (from_node.name,))
     try:
         actor_ref = pykka.ActorRegistry.get_by_urn(to_node.actor_urn)
         actor_ref.tell(message)
         logging.info("%s whispered %s to %s" % (from_node.actor_urn[-4:], content, to_node.actor_urn[-4:]))
         return JsonResponse({'from': from_node.actor_urn, 'to': to_node.actor_urn, 'whisper': content})
     except:
-        raise Http404("Node has no actor")
+        raise Http404("Receiver %s has no actor" % (to_node.name,))
 
 
 @login_required

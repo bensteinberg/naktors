@@ -156,6 +156,19 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/yell/hello')
         self.assertEqual(response.status_code, 404)
 
+        # whisper from a stopped node
+        response = self.client.get('/nodes/1/whisper/2/hello')
+        self.assertEqual(response.status_code, 404)
+
+        # whisper to a stopped node
+        response = self.client.get('/nodes/1/start')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/nodes/1/whisper/2/hello')
+        self.assertEqual(response.status_code, 404)
+        # (and stop the first)
+        response = self.client.get('/nodes/1/stop')
+        self.assertEqual(response.status_code, 200)
+
         # get some other 404s
         response = self.client.get('/nodes/99/')
         self.assertEqual(response.status_code, 404)
@@ -168,4 +181,6 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/99/connect/100')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/nodes/99/disconnect/100')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get('/nodes/99/whisper/100/sh')
         self.assertEqual(response.status_code, 404)
