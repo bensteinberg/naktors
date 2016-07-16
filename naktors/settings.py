@@ -164,6 +164,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'INFO'
         },
+        'pykka': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
     }
 }
 
