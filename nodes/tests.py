@@ -67,7 +67,7 @@ class AppTestCase(TestCase):
         actor_urn = response.json()['actor_urn']
 
         # compare with list of actors
-        response = self.client.get('/actors/')
+        response = self.client.get('/nodes/actors')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(actor_urn in response.json()['actors'])
 
@@ -121,11 +121,20 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/start')
         self.assertEqual(response.status_code, 200)
 
-        # pause to make and break a connection
+        # pause to make, check, and break a connection
+        response = self.client.get('/nodes/connections')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()['connections']), 0)
         response = self.client.get('/nodes/1/connect/2')
         self.assertEqual(response.status_code, 200)
+        response = self.client.get('/nodes/connections')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()['connections']), 1)
         response = self.client.get('/nodes/1/disconnect/2')
         self.assertEqual(response.status_code, 200)
+        response = self.client.get('/nodes/connections')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()['connections']), 0)
 
         # yell:
         response = self.client.get('/nodes/1/yell/hello')
