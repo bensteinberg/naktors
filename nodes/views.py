@@ -143,7 +143,13 @@ def disconnect(request, from_node_id, to_node_id):
 
 @login_required
 def connections(request):
-    pass
+    connections = [{'label': str(connection),
+                    'from_node': connection.from_node.name,
+                    'to_node': connection.to_node.name}
+                   for connection
+                   in NodeConnection.objects.all()]
+    return JsonResponse({'connections': connections})
+
 
 @login_required
 def broadcast(request, content):
@@ -239,7 +245,6 @@ def tell_network(request, node_id, content):
     return JsonResponse({'from': from_node.name,
                          'to': to_nodes,
                          'told': content})
-
 
 
 def _as_object(this_node):
