@@ -121,7 +121,7 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/1/start')
         self.assertEqual(response.status_code, 200)
 
-        # pause to make, check, and break a connection
+        # pause to make, check, use, and break a connection
         response = self.client.get('/nodes/connections')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['connections']), 0)
@@ -130,11 +130,17 @@ class AppTestCase(TestCase):
         response = self.client.get('/nodes/connections')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['connections']), 1)
+        response = self.client.get('/nodes/1/tell/network/hi')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['to'], ['node_b'])
         response = self.client.get('/nodes/1/disconnect/2')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/nodes/connections')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()['connections']), 0)
+        response = self.client.get('/nodes/1/tell/network/hi')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['to'], [])
 
         # yell:
         response = self.client.get('/nodes/1/yell/hello')
@@ -218,4 +224,10 @@ class AppTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
         # tell_class from a stopped node
         response = self.client.get('/nodes/1/tell/class/someclass/hi')
+        self.assertEqual(response.status_code, 404)
+        # tell_network from a non-existent node
+        response = self.client.get('/nodes/99/tell/network/hi')
+        self.assertEqual(response.status_code, 404)
+        # tell_network from a stopped node
+        response = self.client.get('/nodes/1/tell/network/hi')
         self.assertEqual(response.status_code, 404)
