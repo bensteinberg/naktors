@@ -204,18 +204,38 @@ def tell_class(request, node_id, class_name, content):
         this_class = NodeClass.objects.get(class_name=class_name)
     except:
         raise Http404("No such class")
+    to_nodes = []
     for to_node in Node.objects.all():
         if this_class in to_node.node_classes.all():
             actor_ref = pykka.ActorRegistry.get_by_urn(to_node.actor_urn)
             actor_ref.tell(message)
+            to_nodes.append(to_node.name)
     return JsonResponse({'from': from_node.name,
-                         'to': class_name,
+                         'to': to_nodes,
                          'told': content})
 
 
 @login_required
 def tell_network(request, node_id, content):
-    pass
+    try:
+        from_node = Node.objects.get(pk=node_id)
+    except:
+        raise Http404("No such node")
+    if from_node.actor_urn and \
+       pykka.ActorRegistry.get_by_urn(from_node.actor_urn):
+        message = {'sender': from_node.actor_urn, 'data': content}
+    else:
+        raise Http404("Sender %s has no actor" % (from_node.name,))
+    to_nodes = []
+    for connection in NodeConnection.objects.filter(from_node=from_node):
+        to_node = connection.to_node
+        actor_ref = pykka.ActorRegistry.get_by_urn(to_node.actor_urn)
+        actor_ref.tell(message)
+        to_nodes.append(to_node.name)
+    return JsonResponse({'from': from_node.name,
+                         'to': to_nodes,
+                         'told': content})
+
 
 
 def _as_object(this_node):
