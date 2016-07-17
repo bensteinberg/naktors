@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^actors$', views.actors, name='actors'),
+    url(r'^connections$', views.connections, name='connections'),
     url(r'^(?P<node_id>[0-9]+)/$',
         views.node, name='node'),
     url(r'^(?P<node_id>[0-9]+)/start$',

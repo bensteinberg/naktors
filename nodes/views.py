@@ -142,6 +142,10 @@ def disconnect(request, from_node_id, to_node_id):
 
 
 @login_required
+def connections(request):
+    pass
+
+@login_required
 def broadcast(request, content):
     logger.info('Broadcasting "%s"' % (content,))
     message = {'sender': 'someone', 'data': content}
