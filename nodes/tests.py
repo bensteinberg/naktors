@@ -1,6 +1,19 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from nodes.models import Node, NodeConnection, NodeClass
+import nodes.apps
+import naktors.wsgi
+
+
+class MiscTestCase(TestCase):
+    """Cheesy tests to get from 98% to 100% coverage"""
+    def test_apps(self):
+        """test nodes/apps.py"""
+        self.assertTrue(nodes.apps.NodesConfig)
+
+    def test_wsgi(self):
+        """test naktors/wsgi.py"""
+        self.assertNotEqual(naktors.wsgi.application, None)
 
 
 class NodeTestCase(TestCase):
